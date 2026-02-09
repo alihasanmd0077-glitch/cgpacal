@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VTU 2022 SGPA & CGPA Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+    --primary: #2563eb;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--muted);
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    padding-bottom: 10px;
+}
+
+td {
+    padding: 8px 0;
+}
+
+input, select {
+    width: 95%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button.secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 40px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>VTU SGPA & CGPA Calculator</h1>
+    <p>VTU 2022 Scheme • Simple • Accurate • Modern</p>
+</header>
+
+<!-- SGPA CARD -->
+<div class="card">
+    <h2>SGPA Calculator</h2>
+
+    <table id="sgpaTable">
+        <tr>
+            <th>Credits</th>
+            <th>Grade</th>
+        </tr>
+        <tr>
+            <td><input type="number" class="credit" min="1"></td>
+            <td>
+                <select class="grade">
+                    <option value="10">O,   100</option>
+                    <option value="9">A+,   90</option>
+                    <option value="8">A,    80</option>
+                    <option value="7">B+,   70</option>
+                    <option value="6">B,    60</option>
+                    <option value="5">C,    50</option>
+                    <option value="4">P,    40</option>
+                    <option value="0">F,    0</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+
+    <div class="actions">
+        <button class="secondary" onclick="addSubject()">Add Subject</button>
+        <button onclick="calculateSGPA()">Calculate SGPA</button>
+    </div>
+
+    <div class="result" id="sgpaResult"></div>
+</div>
+
+<!-- CGPA CARD -->
+<div class="card">
+    <h2>CGPA Calculator</h2>
+
+    <table id="cgpaTable">
+        <tr>
+            <th>SGPA</th>
+            <th>Semester Credits</th>
+        </tr>
+        <tr>
+            <td><input type="number" step="0.01" class="sgpa"></td>
+            <td><input type="number" class="semCredits"></td>
+        </tr>
+    </table>
+
+    <div class="actions">
+        <button class="secondary" onclick="addSemester()">Add Semester</button>
+        <button onclick="calculateCGPA()">Calculate CGPA</button>
+    </div>
+
+    <div class="result" id="cgpaResult"></div>
+</div>
+
+<footer>
+    © VTU 2022 Scheme Calculator
+    created by Ali Hasan
+</footer>
+
+</div>
+
+<script>
+function addSubject() {
+    const table = document.getElementById("sgpaTable");
+    const row = table.insertRow();
+    row.innerHTML = `
+        <td><input type="number" class="credit" min="1"></td>
+        <td>
+            <select class="grade">
+                <option value="10">O</option>
+                <option value="9">A+</option>
+                <option value="8">A</option>
+                <option value="7">B+</option>
+                <option value="6">B</option>
+                <option value="5">C</option>
+                <option value="4">P</option>
+                <option value="0">F</option>
+            </select>
+        </td>`;
+}
+
+function calculateSGPA() {
+    const credits = document.querySelectorAll(".credit");
+    const grades = document.querySelectorAll(".grade");
+
+    let totalCredits = 0, total = 0;
+
+    credits.forEach((c, i) => {
+        const credit = parseFloat(c.value);
+        const grade = parseFloat(grades[i].value);
+        if (!isNaN(credit)) {
+            totalCredits += credit;
+            total += credit * grade;
+        }
+    });
+
+    document.getElementById("sgpaResult").innerText =
+        totalCredits ? `SGPA: ${(total / totalCredits).toFixed(2)}` : "Enter valid data";
+}
+
+function addSemester() {
+    const table = document.getElementById("cgpaTable");
+    const row = table.insertRow();
+    row.innerHTML = `
+        <td><input type="number" step="0.01" class="sgpa"></td>
+        <td><input type="number" class="semCredits"></td>`;
+}
+
+function calculateCGPA() {
+    const sgpas = document.querySelectorAll(".sgpa");
+    const credits = document.querySelectorAll(".semCredits");
+
+    let totalCredits = 0, total = 0;
+
+    sgpas.forEach((s, i) => {
+        const sgpa = parseFloat(s.value);
+        const credit = parseFloat(credits[i].value);
+        if (!isNaN(sgpa) && !isNaN(credit)) {
+            totalCredits += credit;
+            total += sgpa * credit;
+        }
+    });
+
+    document.getElementById("cgpaResult").innerText =
+        totalCredits ? `CGPA: ${(total / totalCredits).toFixed(2)}` : "Enter valid data";
+}
+</script>
+
+</body>
+</html>
